@@ -13,11 +13,10 @@ This is a simple web application that allows users to fetch the account creation
 
 ## Code Explanation
 - The form with id `github-user-12345` captures the username input.
-- On form submission, the `fetchUser` function is called, which fetches data from the GitHub API.
-- The account creation date is displayed in the `#github-created-at` div.
+- On form submission, the application fetches the account creation date from the GitHub API.
+- The status of the lookup is reported in an aria-live alert with id `github-status`.
+- The account age is displayed in whole years inside the element with id `github-account-age`.
+- The last successful lookup is cached in localStorage and repopulated on page load.
 
 ## License
 This project is licensed under the MIT License.
-
-## Description
-This app demonstrates how to interact with the GitHub API to fetch user data and display it on a web page.
