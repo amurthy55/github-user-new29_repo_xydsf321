@@ -11,39 +11,41 @@
         <h1>Fetch GitHub User Creation Date</h1>
         <div id="github-status" aria-live="polite"></div>
         <div id="github-account-age"></div>
-        <form id="github-user-12345" onsubmit="fetchUser(event)">
-            <div class="form-group">
-                <input type="text" id="username" class="form-control" placeholder="Enter GitHub username" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Fetch</button>
+        <form id="github-user-12345">
+            <input type="text" id="username" placeholder="Enter GitHub username" required />
+            <button type="submit">Fetch</button>
         </form>
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const seed = document.querySelector('#username').value;
-            const cachedUser = localStorage.getItem(`github-user-${seed}`);
-            if (cachedUser) {
-                document.querySelector('#username').value = cachedUser;
-            }
-        });
+            const usernameInput = document.getElementById('username');
+            const statusDiv = document.getElementById('github-status');
+            const accountAgeDiv = document.getElementById('github-account-age');
+            const cachedUser = localStorage.getItem('github-user-${seed}');
 
-        async function fetchUser(event) {
-            event.preventDefault();
-            const username = document.querySelector('#username').value;
-            document.querySelector('#github-status').textContent = 'Fetching user data...';
-            try {
-                const response = await fetch(`https://api.github.com/users/${username}`);
-                if (!response.ok) throw new Error('User not found');
-                const data = await response.json();
-                const creationDate = new Date(data.created_at);
-                const accountAge = new Date().getFullYear() - creationDate.getFullYear();
-                document.querySelector('#github-status').textContent = 'User data fetched successfully!';
-                document.querySelector('#github-account-age').textContent = `Account Age: ${accountAge} years (Created on: ${creationDate.toDateString()})`;
-                localStorage.setItem(`github-user-${username}`, username);
-            } catch (error) {
-                document.querySelector('#github-status').textContent = error.message;
+            if (cachedUser) {
+                usernameInput.value = cachedUser;
             }
-        }
+
+            document.getElementById('github-user-12345').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const username = usernameInput.value;
+                statusDiv.textContent = 'Fetching...';
+
+                try {
+                    const response = await fetch(`https://api.github.com/users/${username}`);
+                    if (!response.ok) throw new Error('User not found');
+                    const data = await response.json();
+                    const creationDate = new Date(data.created_at);
+                    const accountAge = new Date().getFullYear() - creationDate.getFullYear();
+                    accountAgeDiv.textContent = `Account created on: ${creationDate.toLocaleDateString()} (${accountAge} years)`;
+                    localStorage.setItem('github-user-${seed}', username);
+                    statusDiv.textContent = 'Fetch successful!';
+                } catch (error) {
+                    statusDiv.textContent = 'Fetch failed: ' + error.message;
+                }
+            });
+        });
     </script>
 </body>
 </html>
